@@ -5,12 +5,14 @@ const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [editTaskId, setEditTaskId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
-  const [filter, setFilter] = useState('all'); // all, completed, incomplete
+  const [filter, setFilter] = useState('all');
+
+  const API_URL = 'https://todo-task-manager-hackathon.onrender.com/api/tasks';
 
   const fetchTasks = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await axios.get('http://localhost:5000/api/tasks', {
+      const res = await axios.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(res.data);
@@ -22,7 +24,7 @@ const TaskList = () => {
   const deleteTask = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+      await axios.delete(`${API_URL}/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(tasks.filter((task) => task._id !== id));
@@ -35,7 +37,7 @@ const TaskList = () => {
     const token = localStorage.getItem('token');
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/tasks/${task._id}`,
+        `${API_URL}/${task._id}`,
         { completed: !task.completed },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -54,7 +56,7 @@ const TaskList = () => {
     const token = localStorage.getItem('token');
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/tasks/${id}`,
+        `${API_URL}/${id}`,
         { title: editTitle },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -80,7 +82,6 @@ const TaskList = () => {
     <div>
       <h3>Your Tasks</h3>
 
-      {/* Filter Buttons */}
       <div style={{ marginBottom: '15px' }}>
         <button onClick={() => setFilter('all')}>📋 All</button>
         <button onClick={() => setFilter('completed')}>✅ Completed</button>
