@@ -7,14 +7,17 @@ const TaskForm = ({ onTaskAdded }) => {
   const handleAddTask = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
+
     try {
-      const res = await axios.post('http://localhost:5000/api/tasks', {
-        title
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const res = await axios.post(
+        'https://todo-task-manager-hackathon.onrender.com/api/tasks', // ✅ UPDATED
+        { title },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      });
+      );
 
       setTitle('');
       onTaskAdded(res.data); // Notify parent
