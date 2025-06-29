@@ -6,7 +6,7 @@ const TaskList = () => {
   const [editTaskId, setEditTaskId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [editDueDate, setEditDueDate] = useState('');
-  const [filter, setFilter] = useState('all'); // all, completed, incomplete
+  const [filter, setFilter] = useState('all');
 
   const API_URL = 'https://todo-task-manager-hackathon.onrender.com/api/tasks';
 
@@ -51,7 +51,7 @@ const TaskList = () => {
   const startEdit = (task) => {
     setEditTaskId(task._id);
     setEditTitle(task.title);
-    setEditDueDate(task.dueDate ? task.dueDate.slice(0, 10) : ''); // Format for input type="date"
+    setEditDueDate(task.dueDate ? task.dueDate.slice(0, 10) : '');
   };
 
   const submitEdit = async (id) => {
@@ -88,7 +88,6 @@ const TaskList = () => {
     <div>
       <h3>Your Tasks</h3>
 
-      {/* Filter Buttons */}
       <div style={{ marginBottom: '15px' }}>
         <button onClick={() => setFilter('all')}>📋 All</button>
         <button onClick={() => setFilter('completed')}>✅ Completed</button>
@@ -128,7 +127,7 @@ const TaskList = () => {
                 </span>
                 {task.dueDate && (
                   <span style={{ color: '#888', marginRight: '10px' }}>
-                    🗓 Due: {new Date(task.dueDate).toLocaleDateString()}
+                    🗓 {new Date(task.dueDate).toLocaleDateString()}
                   </span>
                 )}
                 <button onClick={() => toggleComplete(task)}>
