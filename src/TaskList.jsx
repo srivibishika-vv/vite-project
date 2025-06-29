@@ -5,7 +5,8 @@ const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [editTaskId, setEditTaskId] = useState(null);
   const [editTitle, setEditTitle] = useState('');
-  const [filter, setFilter] = useState('all');
+  const [editDueDate, setEditDueDate] = useState('');
+  const [filter, setFilter] = useState('all'); // all, completed, incomplete
 
   const API_URL = 'https://todo-task-manager-hackathon.onrender.com/api/tasks';
 
@@ -50,6 +51,7 @@ const TaskList = () => {
   const startEdit = (task) => {
     setEditTaskId(task._id);
     setEditTitle(task.title);
+    setEditDueDate(task.dueDate ? task.dueDate.slice(0, 10) : ''); // Format for input type="date"
   };
 
   const submitEdit = async (id) => {
@@ -57,12 +59,16 @@ const TaskList = () => {
     try {
       const res = await axios.put(
         `${API_URL}/${id}`,
-        { title: editTitle },
+        {
+          title: editTitle,
+          dueDate: editDueDate ? new Date(editDueDate).toISOString() : null,
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setTasks(tasks.map((t) => (t._id === id ? res.data : t)));
       setEditTaskId(null);
       setEditTitle('');
+      setEditDueDate('');
     } catch (err) {
       console.error('Error editing task:', err.message);
     }
@@ -82,6 +88,7 @@ const TaskList = () => {
     <div>
       <h3>Your Tasks</h3>
 
+      {/* Filter Buttons */}
       <div style={{ marginBottom: '15px' }}>
         <button onClick={() => setFilter('all')}>📋 All</button>
         <button onClick={() => setFilter('completed')}>✅ Completed</button>
@@ -100,17 +107,30 @@ const TaskList = () => {
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                 />
+                <input
+                  type="date"
+                  value={editDueDate}
+                  onChange={(e) => setEditDueDate(e.target.value)}
+                  style={{ marginLeft: '10px' }}
+                />
                 <button onClick={() => submitEdit(task._id)}>💾 Save</button>
                 <button onClick={() => setEditTaskId(null)}>❌ Cancel</button>
               </>
             ) : (
               <>
-                <span style={{
-                  textDecoration: task.completed ? 'line-through' : 'none',
-                  marginRight: '10px'
-                }}>
+                <span
+                  style={{
+                    textDecoration: task.completed ? 'line-through' : 'none',
+                    marginRight: '10px',
+                  }}
+                >
                   {task.title}
                 </span>
+                {task.dueDate && (
+                  <span style={{ color: '#888', marginRight: '10px' }}>
+                    🗓 Due: {new Date(task.dueDate).toLocaleDateString()}
+                  </span>
+                )}
                 <button onClick={() => toggleComplete(task)}>
                   {task.completed ? '✅ Undo' : '✔️ Done'}
                 </button>

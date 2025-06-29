@@ -3,6 +3,9 @@ import axios from 'axios';
 
 const TaskForm = ({ onTaskAdded }) => {
   const [title, setTitle] = useState('');
+  const [dueDate, setDueDate] = useState('');
+
+  const API_URL = 'https://todo-task-manager-hackathon.onrender.com/api/tasks';
 
   const handleAddTask = async (e) => {
     e.preventDefault();
@@ -10,16 +13,20 @@ const TaskForm = ({ onTaskAdded }) => {
 
     try {
       const res = await axios.post(
-        'https://todo-task-manager-hackathon.onrender.com/api/tasks', // ✅ UPDATED
-        { title },
+        API_URL,
+        {
+          title,
+          dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+        },
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       setTitle('');
+      setDueDate('');
       onTaskAdded(res.data); // Notify parent
     } catch (err) {
       console.error('Error adding task:', err.response?.data || err.message);
@@ -27,15 +34,22 @@ const TaskForm = ({ onTaskAdded }) => {
   };
 
   return (
-    <form onSubmit={handleAddTask}>
+    <form onSubmit={handleAddTask} style={{ marginBottom: '2rem' }}>
       <input
         type="text"
         placeholder="Enter task title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
+        style={{ marginRight: '10px' }}
       />
-      <button type="submit">Add Task</button>
+      <input
+        type="date"
+        value={dueDate}
+        onChange={(e) => setDueDate(e.target.value)}
+        style={{ marginRight: '10px' }}
+      />
+      <button type="submit">➕ Add Task</button>
     </form>
   );
 };
